@@ -1,0 +1,29 @@
+system:
+  domain: localhost
+
+settings:
+  user-service:
+    port: 8081
+    version: v1
+    url: http://${system.domain}:${settings.user-service.port}/api/${settings.user-service.version}/users/
+
+  product-service:
+    port: 8082
+    version: v1
+    url: http://${system.domain}:${settings.product-service.port}/api/${settings.product-service.version}/products/
+
+  order-service:
+    port: 8083
+    version: v1
+    url: http://${system.domain}:${settings.order-service.port}/api/${settings.order-service.version}/orders/
+
+  file-service:
+    port: 8084
+    version: v1
+    url: http://${system.domain}:${settings.file-service.port}/api/${settings.file-service.version}/files/
+
+#user-service.url=http://${system.domain}:${user-service.port}/api/${user-service.version}/users/
+#customer-service.url=http://${system.domain}:${user-service.port}/api/${user-service.version}/customers/
+#product-service.url=http://${system.domain}:${product-service.port}/api/${product-service.version}/products/
+#order-service.url=http://${system.domain}:${order-service.port}/api/${order-service.version}/orders/
+#file-service.url=http://${system.domain}:${file-service.port}/api/${file-service.version}/files/

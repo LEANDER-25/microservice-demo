@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -36,19 +38,34 @@ public class ResponseTemplate {
         this.information = new ResponseInformation(status);
         response = new HashMap<>();
         response.putAll(information.getInformation());
-        if (isSuccess) setSuccessResponse(body); else setErrorResponse((ExceptionResponse) body);
+        if (isSuccess) setSuccessResponse(body); else setErrorResponse(body);
     }
 
     private void setSuccessResponse(Object body) {
         this.response.put("data", body);
     }
 
-    private void setErrorResponse(ExceptionResponse exception) {
+    private Map<String, Object> createErrorBody(ExceptionResponse exception) {
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", exception.getErrorCode());
         body.put("errorType", exception.getErrorType());
-        body.put("message", exception.getMessage());
-        this.response.put("error", body);
+        if (exception.getMessage() != null && !exception.getMessage().isEmpty() && !exception.getMessage().isBlank()) {
+            body.put("message", exception.getMessage());
+        }
+        else {
+            body.put("messages", exception.getMessages());
+        }
+        return body;
+    }
+
+    private void setErrorResponse(Object exception) {
+        if (exception.getClass().equals(ExceptionResponse.class)) {
+            setErrorResponse((ExceptionResponse) exception);
+        }
+    }
+
+    private void setErrorResponse(ExceptionResponse exception) {
+        this.response.put("error", createErrorBody(exception));
     }
 
     public static ResponseTemplate success(int status, Object body) {

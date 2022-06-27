@@ -1,6 +1,7 @@
 package com.phunghung29.microservice.user.services.impl;
 
 import com.phunghung29.microservice.user.dto.UserReadDTO;
+import com.phunghung29.microservice.user.dto.UserRegisterDTO;
 import com.phunghung29.microservice.user.entities.User;
 import com.phunghung29.microservice.user.repositories.RoleRepository;
 import com.phunghung29.microservice.user.repositories.UserRepository;
@@ -39,6 +40,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserReadDTO> fetchAllUsers(Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public User register(UserRegisterDTO userRegisterDTO) {
         return null;
     }
 }

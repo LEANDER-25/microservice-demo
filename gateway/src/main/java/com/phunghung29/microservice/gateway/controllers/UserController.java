@@ -2,7 +2,6 @@ package com.phunghung29.microservice.gateway.controllers;
 
 
 import com.phunghung29.microservice.gateway.configs.YamlProp;
-import com.phunghung29.microservice.gateway.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Properties;
 
 @RestController
 @RequestMapping("/v1/users")

@@ -1,6 +1,5 @@
 package com.phunghung29.microservice.gateway.response;
 
-import com.phunghung29.microservice.gateway.exceptions.CustomRuntimeException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

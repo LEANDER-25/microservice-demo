@@ -10,4 +10,7 @@ import java.util.UUID;
 public interface UserSessionRepository extends JpaRepository<UserSession, UUID> {
     @Query("SELECT us FROM UserSession us WHERE us.user.id = :userID AND us.deviceType = :userAgent AND us.clientID = :clientID")
     UserSession findByUserID(@Param("userID") UUID userID, @Param("userAgent") String userAgent, @Param("clientID") String clientID);
+
+    @Query("SELECT us FROM UserSession us WHERE us.token = :token")
+    UserSession findByToken(@Param("token") String token);
 }

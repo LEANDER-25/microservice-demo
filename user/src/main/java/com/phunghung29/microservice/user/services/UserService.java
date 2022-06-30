@@ -12,5 +12,5 @@ public interface UserService {
     List<UserReadDTO> fetchAllUsers();
     Page<UserReadDTO> fetchAllUsers(Pageable pageable);
     User register(UserRegisterDTO userRegisterDTO);
-
+    UserReadDTO registerUser(UserRegisterDTO userRegisterDTO);
 }

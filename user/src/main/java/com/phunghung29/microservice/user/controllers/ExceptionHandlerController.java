@@ -4,6 +4,7 @@ import com.phunghung29.microservice.user.exceptions.BadRequestException;
 import com.phunghung29.microservice.user.exceptions.ExceptionCode;
 import com.phunghung29.microservice.user.exceptions.ExceptionResponse;
 import com.phunghung29.microservice.user.response.ResponseTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,16 +23,15 @@ public class ExceptionHandlerController {
         return ResponseTemplate.error(exception).release();
     }
 
-    @ExceptionHandler(BindException.class)
-    public ResponseEntity<?> handleBindingException(BindException bindException, WebRequest webRequest) {
-        ExceptionResponse exception = new ExceptionResponse(BadRequestException.CODE, ExceptionCode.INVALID_FORMAT, BadRequestException.TYPE, bindException.getMessage());
-        return ResponseTemplate.error(Integer.parseInt(exception.getStatusCode()), exception).release();
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException, WebRequest webRequest) {
-        ExceptionResponse exception = new ExceptionResponse("400", ExceptionCode.INVALID_FORMAT, BadRequestException.TYPE, new ArrayList<>());
         BindingResult bindingResult = methodArgumentNotValidException.getBindingResult();
+        ExceptionResponse exception = new ExceptionResponse(
+                String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                ExceptionCode.INVALID_FORMAT,
+                BadRequestException.TYPE,
+                new ArrayList<>()
+        );
         bindingResult.getAllErrors().forEach(err -> exception.getMessages().add(err.getDefaultMessage()));
         return ResponseTemplate.error(400, exception).release();
     }

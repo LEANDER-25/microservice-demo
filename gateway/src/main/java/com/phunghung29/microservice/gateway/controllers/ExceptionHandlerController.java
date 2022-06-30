@@ -9,8 +9,8 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
-    @ExceptionHandler(ExceptionResponse.class)
-    public ResponseEntity<?> handleException(ExceptionResponse exception, WebRequest webRequest) {
-        return ResponseTemplate.error(Integer.parseInt(exception.getStatusCode()), exception).release();
+    @ExceptionHandler(CustomRuntimeException.class)
+    public ResponseEntity<?> handleException(CustomRuntimeException exception, WebRequest webRequest) {
+        return ResponseTemplate.error(Integer.parseInt(exception.getStatusCode()), exception).build().release();
     }
 }

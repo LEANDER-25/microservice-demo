@@ -2,6 +2,7 @@ package com.phunghung29.microservice.gateway.services;
 
 import com.phunghung29.microservice.gateway.dto.LoginDTO;
 import com.phunghung29.microservice.gateway.dto.LoginRequestDTO;
+import com.phunghung29.microservice.gateway.entities.User;
 import com.phunghung29.microservice.gateway.entities.UserSession;
 
 import java.util.Map;
@@ -16,4 +17,9 @@ public interface GatewayService {
     UserSession checkSession(UUID userId, String userAgent, String encryptedClientID);
     void overrideSession(UUID userId, String token, String userAgent, String encryptedClientID);
     String createClientID(String rawKey);
+    boolean verifyToken(String token, String clientId, String userAgent);
+    UserSession checkToken(String token, boolean isParse);
+    User handleToken(String token, boolean isParse, String clientId, String userAgent);
+    LoginDTO refreshAccessToken(String refreshToken);
+    User findByEmail(String email);
 }

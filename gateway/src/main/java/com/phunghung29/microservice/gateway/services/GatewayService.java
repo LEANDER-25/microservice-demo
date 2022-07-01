@@ -17,9 +17,5 @@ public interface GatewayService {
     UserSession checkSession(UUID userId, String userAgent, String encryptedClientID);
     void overrideSession(UUID userId, String token, String userAgent, String encryptedClientID);
     String createClientID(String rawKey);
-    boolean verifyToken(String token, String clientId, String userAgent);
-    UserSession checkToken(String token, boolean isParse);
-    User handleToken(String token, boolean isParse, String clientId, String userAgent);
-    LoginDTO refreshAccessToken(String refreshToken);
     User findByEmail(String email);
 }

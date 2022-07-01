@@ -3,21 +3,25 @@ system:
 
 settings:
   user-service:
+    name: user-service
     port: 8081
     version: v1
     url: http://${system.domain}:${settings.user-service.port}/api/${settings.user-service.version}/users/
 
   product-service:
+    name: product-service
     port: 8082
     version: v1
     url: http://${system.domain}:${settings.product-service.port}/api/${settings.product-service.version}/products/
 
   order-service:
+    name: order-service
     port: 8083
     version: v1
     url: http://${system.domain}:${settings.order-service.port}/api/${settings.order-service.version}/orders/
 
   file-service:
+    name: file-service
     port: 8084
     version: v1
     url: http://${system.domain}:${settings.file-service.port}/api/${settings.file-service.version}/files/

@@ -72,7 +72,7 @@ public class GatewayServiceImpl implements GatewayService {
         } catch (DisabledException e) {
             throw new UnAuthorizationException(ExceptionCode.USER_DISABLED, e.getMessage());
         } catch (BadCredentialsException e) {
-            throw new UnAuthorizationException(ExceptionCode.INCORRECT_IDENTIFIER_OR_PASSWORD, e.getMessage());
+            throw new UnAuthorizationException(ExceptionCode.INCORRECT_IDENTIFIER_OR_PASSWORD, "Email or username or password is incorrect");
         }
     }
 
@@ -221,69 +221,6 @@ public class GatewayServiceImpl implements GatewayService {
                  NoSuchAlgorithmException | InvalidKeySpecException | BadPaddingException | InvalidKeyException e) {
             throw new InternalServerException(e.getMessage());
         }
-    }
-
-    @Override
-    public boolean verifyToken(String token, String clientId, String userAgent) {
-        User detectedUser = handleToken(token, false, clientId, userAgent);
-        return detectedUser != null;
-    }
-
-    @Override
-    public UserSession checkToken(String token, boolean isParse) {
-        if (!token.startsWith("Bearer") && !isParse) {
-            throw new UnAuthorizationException(ExceptionCode.TOKEN, "Missing Bearer prefix");
-        }
-        if (token.startsWith("Bearer") && !isParse) {
-            token = token.split(" ")[1];
-        }
-        return userSessionRepository.findByToken(token);
-    }
-
-    @Override
-    public User handleToken(String token, boolean isParse, String clientId, String userAgent) {
-        Properties prop = Utils.loadProperties("jwt.setting.properties");
-        String secret = prop.getProperty("key");
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        DecodedJWT decodedJWT = verifier.verify(token);
-        Date issuedAt = decodedJWT.getIssuedAt();
-        Date expireAt = decodedJWT.getExpiresAt();
-        long expireTime = expireAt.getTime() - issuedAt.getTime();
-        long accessTime = Long.parseLong(prop.getProperty("access_expired"));
-        long refreshTime = Long.parseLong(prop.getProperty("refresh_expired"));
-        boolean isAccessToken = accessTime == expireTime;
-        boolean isRefreshToken = refreshTime == expireTime;
-        Map<String, Claim> tokenClaims = decodedJWT.getClaims();
-        assert tokenClaims != null;
-        String email = tokenClaims.get("sub").asString();
-        User user = findByEmail(email);
-        if (isRefreshToken) {
-            if (checkToken(token, true) == null) {
-                throw new UnAuthorizationException(ExceptionCode.TOKEN_NOT_FOUND, "Token not found");
-            }
-        }
-        if (isAccessToken) {
-            if (clientId == null || clientId.isEmpty() || clientId.isBlank()) {
-                throw new UnAuthorizationException(ExceptionCode.CLIENT_MISSING, "Missing Client ID Header");
-            }
-            if (userAgent == null || userAgent.isEmpty() || userAgent.isBlank()) {
-                throw new UnAuthorizationException(ExceptionCode.USER_AGENT_MISSING, "Missing User Agent Header");
-            }
-            UserSession userSession = checkSession(user.getId(), userAgent, clientId);
-            if (userSession == null) {
-                throw new UnAuthorizationException(ExceptionCode.TOKEN_EXPIRED, "Access token is expired");
-            }
-        }
-        if (!isAccessToken && !isRefreshToken) {
-            throw new UnAuthorizationException(ExceptionCode.TOKEN_UNKNOWN, "Unknown token");
-        }
-        return user;
-    }
-
-    @Override
-    public LoginDTO refreshAccessToken(String refreshToken) {
-        return null;
     }
 
     @Override

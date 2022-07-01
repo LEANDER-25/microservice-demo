@@ -3,7 +3,7 @@ package com.phunghung29.microservice.user.exceptions;
 import lombok.Getter;
 
 @Getter
-public class InternalServerException extends ExceptionResponse{
+public class InternalServerException extends CustomRuntimeException {
     public static final String CODE = "500";
     public static final String TYPE = "INTERNAL SERVER ERROR";
 

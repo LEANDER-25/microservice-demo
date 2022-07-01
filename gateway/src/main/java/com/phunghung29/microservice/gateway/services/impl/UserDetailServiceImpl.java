@@ -31,11 +31,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmailOrUsername(username);
         if (user == null) {
-            throw new NotFoundException(ExceptionCode.USER_NOT_FOUND, "User Not Found");
+            throw new UnAuthorizationException(ExceptionCode.INCORRECT_IDENTIFIER_OR_PASSWORD, "Email or username or password is incorrect");
         }
         Optional<Role> role = roleRepository.findById(user.getRole().getId());
         if (role.isEmpty()) {
-            throw new UnAuthorizationException(ExceptionCode.INVALID_ROLE, "Invalid Role");
+            throw new UnAuthorizationException(ExceptionCode.INVALID_ROLE, "Invalid role");
         }
         String roleName = role.get().getRoleName();
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

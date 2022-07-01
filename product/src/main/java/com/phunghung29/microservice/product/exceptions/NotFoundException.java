@@ -3,7 +3,7 @@ package com.phunghung29.microservice.product.exceptions;
 import lombok.Getter;
 
 @Getter
-public class NotFoundException extends ExceptionResponse {
+public class NotFoundException extends CustomRuntimeException {
     public static final String CODE = "404";
     public static final String TYPE = "NOT FOUND";
 

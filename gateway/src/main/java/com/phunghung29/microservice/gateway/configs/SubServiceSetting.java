@@ -10,7 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubServiceSetting {
-    String port;
-    String version;
-    String url;
+    private String name;
+    private String port;
+    private String version;
+    private String url;
 }

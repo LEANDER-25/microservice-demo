@@ -7,12 +7,17 @@ import com.phunghung29.microservice.gateway.exceptions.ExceptionCode;
 import com.phunghung29.microservice.gateway.exceptions.UnAuthorizationException;
 import com.phunghung29.microservice.gateway.response.ResponseTemplate;
 import com.phunghung29.microservice.gateway.services.GatewayService;
+import com.phunghung29.microservice.gateway.services.TokenHandleService;
 import com.phunghung29.microservice.gateway.utils.CustomHttpHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,7 +30,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class JwtHandleFilter extends OncePerRequestFilter {
 
-    private final GatewayService gatewayService;
+    private final TokenHandleService tokenHandleService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,21 +44,20 @@ public class JwtHandleFilter extends OncePerRequestFilter {
         assert token.startsWith("Bearer");
         token = token.split(" ")[1];
         try {
-            User user = gatewayService.handleToken(
+            User user = tokenHandleService.handleToken(
                     token,
                     true,
                     request.getHeader(CustomHttpHeader.CLIENTID),
                     request.getHeader(HttpHeaders.USER_AGENT)
             );
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRole().getRoleName()));
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    user, user, authorities
+                    user, user, userDetails.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             filterChain.doFilter(request, response);
         } catch (TokenExpiredException | JWTDecodeException | IOException | UnAuthorizationException e) {
-            ResponseTemplate.error(new UnAuthorizationException(ExceptionCode.TOKEN, e.getMessage())).build().releaseAsServlet(response);
+            ResponseTemplate.error(new UnAuthorizationException(ExceptionCode.TOKEN, e.getMessage())).setStatus(HttpStatus.UNAUTHORIZED).build().releaseAsServlet(response);
         }
     }
 }

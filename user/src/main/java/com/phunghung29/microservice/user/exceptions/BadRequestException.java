@@ -3,7 +3,7 @@ package com.phunghung29.microservice.user.exceptions;
 import lombok.Getter;
 
 @Getter
-public class BadRequestException extends ExceptionResponse {
+public class BadRequestException extends CustomRuntimeException {
     public static final String CODE = "400";
     public static final String TYPE = "BAD REQUEST";
 

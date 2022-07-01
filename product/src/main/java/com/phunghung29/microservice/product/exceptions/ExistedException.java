@@ -3,7 +3,7 @@ package com.phunghung29.microservice.product.exceptions;
 import lombok.Getter;
 
 @Getter
-public class ExistedException extends ExceptionResponse {
+public class ExistedException extends CustomRuntimeException {
     public static final String CODE = "409";
     public static final String TYPE = "EXISTED";
 

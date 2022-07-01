@@ -1,11 +1,9 @@
 package com.phunghung29.microservice.gateway.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.phunghung29.microservice.gateway.utils.Utils;
+import lombok.*;
+import org.json.simple.JSONObject;
 import org.springframework.beans.BeanUtils;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +11,17 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Getter
 @Setter
+@ToString
 public class ResponseTemplate {
-    ResponseInformation information;
-    Object data;
-    ExceptionResponse error;
-    String message;
+    private ResponseInformation information;
+    private Object data;
+    private ExceptionResponse error;
+    private String message;
 
     @Getter
     @Setter
@@ -31,6 +31,8 @@ public class ResponseTemplate {
         private String statusCode;
         private String errorCode;
         private String errorType;
+        private String message;
+        private List<String> messages;
     }
 
     private ResponseTemplate() {
@@ -43,12 +45,13 @@ public class ResponseTemplate {
     public HttpServletResponse releaseAsServlet(HttpServletResponse defaultResponse) {
         defaultResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         Map<String, Object> response = new HashMap<>();
-        response.put("information", information);
-        if (error != null) {
-            response.put("error", error);
+        Map<String, Object> mapped = Utils.convertObjectToMap(this);
+        response.put("information", mapped.get("information"));
+        if (this.error != null) {
+            response.put("error", mapped.get("error"));
         } else {
-            response.put("data", data);
-            response.put("message", message);
+            response.put("data", mapped.get("data"));
+            response.put("message", mapped.get("message"));
         }
         JSONObject jsonObject = new JSONObject(response);
         try {

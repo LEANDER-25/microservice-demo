@@ -2,12 +2,15 @@ package com.phunghung29.microservice.gateway.controllers;
 
 import com.phunghung29.microservice.gateway.dto.LoginDTO;
 import com.phunghung29.microservice.gateway.dto.LoginRequestDTO;
+import com.phunghung29.microservice.gateway.entities.User;
 import com.phunghung29.microservice.gateway.response.ResponseTemplate;
 import com.phunghung29.microservice.gateway.services.GatewayService;
+import com.phunghung29.microservice.gateway.services.TokenHandleService;
 import com.phunghung29.microservice.gateway.utils.CustomHttpHeader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GatewayController {
 
     private final GatewayService gatewayService;
+    private final TokenHandleService tokenHandleService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
@@ -30,11 +34,11 @@ public class GatewayController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
             @RequestHeader(CustomHttpHeader.CLIENTID) String clientId) {
-        return ResponseTemplate.success(gatewayService.verifyToken(token, clientId, userAgent)).build().release();
+        return ResponseTemplate.success(tokenHandleService.verifyToken(token, clientId, userAgent)).release();
     }
 
     @PostMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {
-        return ResponseTemplate.success(gatewayService.refreshAccessToken(refreshToken)).build().release();
+        return ResponseTemplate.success(tokenHandleService.refreshAccessToken(refreshToken)).release();
     }
 }

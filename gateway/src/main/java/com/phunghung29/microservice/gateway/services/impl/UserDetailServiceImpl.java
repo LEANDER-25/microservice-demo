@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -33,11 +32,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UnAuthorizationException(ExceptionCode.INCORRECT_IDENTIFIER_OR_PASSWORD, "Email or username or password is incorrect");
         }
-        Optional<Role> role = roleRepository.findById(user.getRole().getId());
-        if (role.isEmpty()) {
-            throw new UnAuthorizationException(ExceptionCode.INVALID_ROLE, "Invalid role");
-        }
-        String roleName = role.get().getRoleName();
+        Role role = roleRepository.findById(user.getRole().getId()).orElseThrow(() -> new UnAuthorizationException(ExceptionCode.INVALID_ROLE, "Invalid role"));
+        String roleName = role.getRoleName();
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(roleName));
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);

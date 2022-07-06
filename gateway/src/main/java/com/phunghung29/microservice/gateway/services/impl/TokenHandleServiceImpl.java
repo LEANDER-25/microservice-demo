@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -78,8 +79,7 @@ public class TokenHandleServiceImpl implements TokenHandleService {
                 throw new UnAuthorizationException(ExceptionCode.TOKEN_EXPIRED, "Access token is expired");
             }
             String savedToken = userSession.getToken();
-            DecodedJWT decodedSavedToken = crackToken(savedToken);
-            if (decodedSavedToken.getIssuedAt().getTime() != issuedAt.getTime()) {
+            if (savedToken == null) {
                 throw new UnAuthorizationException(ExceptionCode.TOKEN_EXPIRED, "Access token is expired");
             }
         }
